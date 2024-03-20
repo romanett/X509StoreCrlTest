@@ -1,0 +1,5 @@
+CertEnumCRLsInStore
+CertFreeCRLContext
+CertSerializeCRLStoreElement
+CertAddEncodedCRLToStore
+CertDeleteCRLFromStore
