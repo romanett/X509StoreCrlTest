@@ -96,7 +96,7 @@ namespace PInvokeTest
             return crls.ToArray();
         }
 
-        private static byte[] ReadCrlFromCrlContext(CRL_CONTEXT* crlContext)
+        public static byte[] ReadCrlFromCrlContext(CRL_CONTEXT* crlContext)
         {
             if ((RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) && OperatingSystem.IsOSPlatformVersionAtLeast("Windows", 5, 1, 2600))
             {

@@ -33,16 +33,36 @@ namespace PInvokeTest
 
         public static void DeleteCrl(IntPtr storeHandle, byte[] crl)
         {
-            throw new NotImplementedException();
             if ((RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) && OperatingSystem.IsOSPlatformVersionAtLeast("Windows", 5, 1, 2600))
             {
-                CrlEnumerationHelper.GetCrls(storeHandle);
+                CRL_CONTEXT* crlContext = (CRL_CONTEXT*)IntPtr.Zero;
+                while (true)
+                {
+                    crlContext = PInvoke.CertEnumCRLsInStore((HCERTSTORE)storeHandle.ToPointer(), crlContext);
 
-                //PInvoke.CertDeleteCRLFromStore()
+                    if (crlContext != null)
+                    {
+                        byte[] storeCrl = CrlEnumerationHelper.ReadCrlFromCrlContext(crlContext);
 
-                //IntPtr rawCrl = Marshal.AllocHGlobal(crl.Length);
-
-                //Marshal.Copy(crl, 0, rawCrl, crl.Length);
+                        
+                        if (crl != null && crl.SequenceEqual(storeCrl))
+                        {
+                            if (!PInvoke.CertDeleteCRLFromStore(crlContext))
+                            {
+                                var error = Marshal.GetLastWin32Error();
+                                if (error != 0)
+                                    Console.WriteLine("Errorcode from CertDeleteCRLFromStore: " + error);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var error = Marshal.GetLastWin32Error();
+                        if (error != 0)
+                            Console.WriteLine("Errorcode from CertEnumCRLsInStore: " + error);
+                        break;
+                    }
+                }
             }
         }
     }
