@@ -14,18 +14,7 @@ foreach (StoreLocation storeLocation in (StoreLocation[])
 
         try
         {
-            store.Open(OpenFlags.OpenExistingOnly);
-
-            Console.WriteLine("Store "+ store.Name+ " on "+ store.Location + " opened with " +
-                store.Certificates.Count + " Certificates" + "\n");
-
-            IntPtr handle = store.StoreHandle;
-
-            //byte[] crl = CrlEnumerationHelper.GetCrl(handle);
-
-            //Console.WriteLine("crl: " + Encoding.Default.GetString(crl) + "\n");
-
-            byte[][] crls = CrlEnumerationHelper.GetCrls(handle);
+            byte[][] crls = store.EnumerateCrls();
 
             foreach (byte[] crl2 in crls)
             {
@@ -33,7 +22,7 @@ foreach (StoreLocation storeLocation in (StoreLocation[])
 
                 Console.WriteLine("Trying to add crl to store: ");
 
-                AddDeleteCrlHelper.AddCrl(handle, crl2);
+                store.AddCrl(crl2);
             }
             store.Close();
         }
