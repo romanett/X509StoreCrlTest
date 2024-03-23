@@ -82,7 +82,7 @@ namespace PInvokeTest
                             var error = Marshal.GetLastWin32Error(); 
                             if (error == -2146885628)
                             {
-                                Console.WriteLine("No more crls found in store");
+                                //Console.WriteLine("No more crls found in store");
                             }
                             else if(error != 0)
                                 Console.WriteLine("Errorcode from CertEnumCRLsInStore: " + error);

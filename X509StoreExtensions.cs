@@ -27,7 +27,7 @@ namespace PInvokeTest
         {
             if (!store.IsOpen)
             {
-                store.Open(OpenFlags.OpenExistingOnly);
+                store.Open(OpenFlags.ReadWrite);
                 Console.WriteLine("Store " + store.Name + " on " + store.Location + " opened with " +
                store.Certificates.Count + " Certificates" + "\n");
             }
@@ -41,7 +41,7 @@ namespace PInvokeTest
         {
             if (!store.IsOpen)
             {
-                store.Open(OpenFlags.OpenExistingOnly);
+                store.Open(OpenFlags.ReadWrite);
                 Console.WriteLine("Store " + store.Name + " on " + store.Location + " opened with " +
                store.Certificates.Count + " Certificates" + "\n");
             }

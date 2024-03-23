@@ -25,7 +25,7 @@ namespace PInvokeTest
                 //#define CERT_STORE_ADD_REPLACE_EXISTING_INHERIT_PROPERTIES  5
                 //#define CERT_STORE_ADD_NEWER                                6
                 //#define CERT_STORE_ADD_NEWER_INHERIT_PROPERTIES             7
-                if (PInvoke.CertAddEncodedCRLToStore((HCERTSTORE)storeHandle.ToPointer(), CERT_QUERY_ENCODING_TYPE.PKCS_7_ASN_ENCODING, (byte*)rawCrl, (uint)crl.Length, 3, null))
+                if (PInvoke.CertAddEncodedCRLToStore((HCERTSTORE)storeHandle.ToPointer(), CERT_QUERY_ENCODING_TYPE.X509_ASN_ENCODING, (byte*)rawCrl, (uint)crl.Length, 3, null))
                 {
                     Console.WriteLine("Sucessfully added crl to store");
                     return;
@@ -36,6 +36,16 @@ namespace PInvokeTest
                     if(error == -2147024809)
                     {
                         Console.WriteLine("Errorcode from CertAddEncodedCRLToStore: ERROR_INVALID_PARAMETER, The parameter is incorrect. " + error);
+                        return;
+                    }
+                    if(error == -2146881269)
+                    {
+                        Console.WriteLine("Errorcode from CertAddEncodedCRLToStore: CRYPT_E_ASN1_BADTAG, ASN1 bad tag value met. " + error);
+                        return;
+                    }
+                    if (error == -2147024891)
+                    {
+                        Console.WriteLine("Errorcode from CertAddEncodedCRLToStore: ERROR_ACCESS_DENIED, Access is denied. " + error);
                         return;
                     }
                     if (error != 0)
@@ -67,12 +77,20 @@ namespace PInvokeTest
                                 if (error != 0)
                                     Console.WriteLine("Errorcode from CertDeleteCRLFromStore: " + error);
                             }
+                            else
+                            {
+                                Console.WriteLine("Sucessfully deleted crl from store");
+                            }
+                            break;
                         }
                     }
                     else
                     {
                         var error = Marshal.GetLastWin32Error();
-                        if (error != 0)
+                        if (error == -2146885628)
+                        {
+                            //Console.WriteLine("No more crls found in store");
+                        }else if (error != 0)
                             Console.WriteLine("Errorcode from CertEnumCRLsInStore: " + error);
                         break;
                     }

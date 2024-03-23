@@ -2,6 +2,8 @@
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using static System.Formats.Asn1.AsnWriter;
+using static System.Net.Mime.MediaTypeNames;
 
 
 foreach (StoreLocation storeLocation in (StoreLocation[])
@@ -28,10 +30,23 @@ foreach (StoreLocation storeLocation in (StoreLocation[])
         }
         catch (CryptographicException e)
         {
-            Console.WriteLine("Store {0} failed to open on {1} " + e.Message,
-                store.Name, store.Location);
+            //Console.WriteLine("Store {0} failed to open on {1} " + e.Message,
+            //    store.Name, store.Location);
         }
     }
     Console.WriteLine();
 }
 
+X509Store CaStore = new X509Store(StoreName.CertificateAuthority, StoreLocation.CurrentUser);
+
+try
+{
+    var myCrl = File.ReadAllBytes("Test.crl");
+    Console.WriteLine(Encoding.Default.GetString(myCrl));
+    //CaStore.AddCrl(myCrl);
+    CaStore.DeleteCrl(myCrl);
+}
+catch (CryptographicException e)
+{
+    Console.WriteLine("Store CertificateAuthority failed to open on LocalMachine " + e.Message);
+}
