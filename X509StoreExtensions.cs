@@ -37,5 +37,18 @@ namespace PInvokeTest
             AddDeleteCrlHelper.AddCrl(handle, crl);
         }
 
+        public static void DeleteCrl(this X509Store store, byte[] crl)
+        {
+            if (!store.IsOpen)
+            {
+                store.Open(OpenFlags.OpenExistingOnly);
+                Console.WriteLine("Store " + store.Name + " on " + store.Location + " opened with " +
+               store.Certificates.Count + " Certificates" + "\n");
+            }
+
+            IntPtr handle = store.StoreHandle;
+
+            AddDeleteCrlHelper.DeleteCrl(handle, crl);
+        }
     }
 }

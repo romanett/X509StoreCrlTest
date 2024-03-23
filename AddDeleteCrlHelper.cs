@@ -15,8 +15,17 @@ namespace PInvokeTest
 
                 Marshal.Copy(crl, 0, rawCrl, crl.Length);
 
-                //CERT_STORE_ADD_REPLACE_EXISTING
-                if (PInvoke.CertAddEncodedCRLToStore((HCERTSTORE)storeHandle.ToPointer(), CERT_QUERY_ENCODING_TYPE.PKCS_7_ASN_ENCODING, (byte*)rawCrl, (uint)crl.Length, 0, null))
+                /////+-------------------------------------------------------------------------
+                // Add certificate/CRL, encoded, context or element disposition values.
+                //--------------------------------------------------------------------------
+                //#define CERT_STORE_ADD_NEW                                  1
+                //#define CERT_STORE_ADD_USE_EXISTING                         2
+                //#define CERT_STORE_ADD_REPLACE_EXISTING                     3
+                //#define CERT_STORE_ADD_ALWAYS                               4
+                //#define CERT_STORE_ADD_REPLACE_EXISTING_INHERIT_PROPERTIES  5
+                //#define CERT_STORE_ADD_NEWER                                6
+                //#define CERT_STORE_ADD_NEWER_INHERIT_PROPERTIES             7
+                if (PInvoke.CertAddEncodedCRLToStore((HCERTSTORE)storeHandle.ToPointer(), CERT_QUERY_ENCODING_TYPE.PKCS_7_ASN_ENCODING, (byte*)rawCrl, (uint)crl.Length, 3, null))
                 {
                     Console.WriteLine("Sucessfully added crl to store");
                     return;
@@ -24,6 +33,11 @@ namespace PInvokeTest
                 else
                 {
                     var error = Marshal.GetLastWin32Error();
+                    if(error == -2147024809)
+                    {
+                        Console.WriteLine("Errorcode from CertAddEncodedCRLToStore: ERROR_INVALID_PARAMETER, The parameter is incorrect. " + error);
+                        return;
+                    }
                     if (error != 0)
                         Console.WriteLine("Errorcode from CertAddEncodedCRLToStore: " + error);
                     return;

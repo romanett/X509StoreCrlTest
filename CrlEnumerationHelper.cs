@@ -68,7 +68,6 @@ namespace PInvokeTest
                     while (true){
                         crlContext = PInvoke.CertEnumCRLsInStore((HCERTSTORE)storeHandle.ToPointer(), crlContext);
 
-
                         if (crlContext != null)
                         {
                             byte[] crl = ReadCrlFromCrlContext(crlContext);
@@ -80,8 +79,12 @@ namespace PInvokeTest
                         }
                         else
                         {
-                            var error = Marshal.GetLastWin32Error();
-                            if (error != 0)
+                            var error = Marshal.GetLastWin32Error(); 
+                            if (error == -2146885628)
+                            {
+                                Console.WriteLine("No more crls found in store");
+                            }
+                            else if(error != 0)
                                 Console.WriteLine("Errorcode from CertEnumCRLsInStore: " + error);
                             break;
                         }

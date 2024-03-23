@@ -26,9 +26,9 @@ foreach (StoreLocation storeLocation in (StoreLocation[])
             }
             store.Close();
         }
-        catch (CryptographicException)
+        catch (CryptographicException e)
         {
-            Console.WriteLine("Store {0} failed to open on {1}",
+            Console.WriteLine("Store {0} failed to open on {1} " + e.Message,
                 store.Name, store.Location);
         }
     }
